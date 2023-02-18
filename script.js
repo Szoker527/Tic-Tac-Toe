@@ -1,44 +1,87 @@
-//
-const gameBoard = {
-  gameArray: ["X", "O", "X", "O", "X", "O", "X", "O", "X"],
-};
+function gameBoard () {
+  const rows = 3;
+  const columns = 3;
+  const board = [];
 
-const newPlayer = function (name, weapon) {
-  return {
-    name,
-    weapon,
-  };
-};
-
-const playerO = newPlayer("playerOne", "O");
-const playerX = newPlayer("player   Two", "X");
-
-const displayAction= (() => {
-    let marker 
-    const page = document.querySelectorAll(".game");
-    const buttons = document.querySelectorAll(".btn");
-    const showArray = (array) => {
-      for (let index = 0; index < page.length; index++) {
-        page[index].addEventListener("click", function () {
-          console.log(array[index])
-        });
-        page[index].innerHTML = array[index];
-      }
-    };
-    const newMakrer = () => {
-        for (let i = 0; i < buttons.length; i++) {
-            buttons[i].addEventListener('click', function() {
-                marker = buttons[i].id
-              console.log(marker);
-            })
-        }
+  for (let i = 0; i < rows; i++) {
+    board[i] = [];
+    for (let j = 0; j < columns; j++) {
+      board[i].push(Cell());
     }
-    return {
-      showArray,
-      newMakrer
 
-    };
-  })();
+  }
 
-displayAction.showArray(gameBoard.gameArray);
-displayAction.newMakrer()
+  const printBoard = () => {
+    const boardWithCellValues = board.map((row) => row.map((cell) => cell.getValue()))
+    console.log(boardWithCellValues);
+  }
+
+  const changeCell = (row, column, player) => {
+    if (board[row][column].getValue() === "X" || board[row][column].getValue() === "O") {
+      return console.log("This cell is taken");
+    }
+    board[row][column].addToken(player)
+    console.log(board[row][column].getValue())
+  }
+  return {
+    printBoard,
+    changeCell
+  }
+
+}
+
+function Cell () {
+  let value = 0;
+
+  const addToken = (player) => {
+    value = player;
+  };
+
+  const getValue = () => value;
+
+  return {
+    getValue,
+    addToken
+  }
+
+}
+
+function gameControl () {
+  const board = gameBoard();
+
+  const players = [
+    {
+      name: "playerOneName",
+      token: "X"
+    },
+    {
+      name: "playerTwoName",
+      token: "O"
+    }
+  ];
+
+  let activePlayer = players[0];
+  
+  const switchPlayerTurn = () => {
+    activePlayer = activePlayer === players[0] ? players[1] : players[0];
+  };
+
+  const getActivePlayer = () => activePlayer;
+  
+  const showResult = () => {
+    board.printBoard()
+  }
+
+  const playGame = (row, column) => {
+     board.changeCell(row, column, getActivePlayer().token)
+     console.log(getActivePlayer().token)
+     switchPlayerTurn()
+     showResult()
+  }
+
+  return {
+    playGame
+  }
+}
+
+const game = gameControl();
