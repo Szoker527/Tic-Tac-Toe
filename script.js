@@ -18,7 +18,7 @@ function gameBoard () {
 
   const changeCell = (row, column, player) => {
     if (board[row][column].getValue() === "X" || board[row][column].getValue() === "O") {
-      return console.log("This cell is taken");
+      return "taken"
     }
     board[row][column].addToken(player)
     console.log(board[row][column].getValue())
@@ -73,8 +73,12 @@ function gameControl () {
   }
 
   const playGame = (row, column) => {
-     board.changeCell(row, column, getActivePlayer().token)
+     const change = board.changeCell(row, column, getActivePlayer().token)
+     console.log(change);
      console.log(getActivePlayer().token)
+     if (change === "taken") {
+      return "This place is already occupied"
+     }
      switchPlayerTurn()
      showResult()
   }
