@@ -56,11 +56,23 @@ function gameControl () {
       name: "playerOneName",
       token: "X",
       position: [],
+      checkArray: function(array) {
+        const newArray = this.position.filter(num => array.includes(num));
+        if (newArray.length === 3) {
+          console.log("Winner!")
+        }
+      }
     },
     {
       name: "playerTwoName",
       token: "O",
       position: [],
+      checkArray: function(array) {
+        const newArray = this.position.filter(num => array.includes(num));
+        if (newArray.length === 3) {
+          console.log("Winner!")
+        }
+      }
     }
   ];
 
@@ -116,21 +128,11 @@ function gameControl () {
     if(row === 2 && column === 2) {
       activePlayer.position.push(9)
     }
-    console.log(activePlayer.position)
   }
 
   const checkWin = (player) => {
-    if (player.length < 2) {
-      return "wow"
-    }
-
     winningCombination.forEach(array => {
-      for (let i = 0; i < player.length; i++) {
-        if (array[i] === player[i]) {
-          console.log("nice")
-        }
-        
-      }
+        player.checkArray(array)
     })
   }
 
@@ -141,7 +143,7 @@ function gameControl () {
      }
      console.log(activePlayer)
      addPosition(row, column)
-     checkWin(activePlayer.position)
+     checkWin(activePlayer)
      switchPlayerTurn()
      showResult()
   }
