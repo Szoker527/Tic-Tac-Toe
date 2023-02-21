@@ -1,3 +1,6 @@
+const squares = document.querySelectorAll(".game")
+
+
 function gameBoard () {
   const rows = 3;
   const columns = 3;
@@ -8,8 +11,9 @@ function gameBoard () {
     for (let j = 0; j < columns; j++) {
       board[i].push(Cell());
     }
-
   }
+
+  const getBoard = () => board;
 
   const printBoard = () => {
     const boardWithCellValues = board.map((row) => row.map((cell) => cell.getValue()))
@@ -26,6 +30,7 @@ function gameBoard () {
   }
 
   return {
+    getBoard,
     printBoard,
     changeCell,
   }
@@ -101,56 +106,103 @@ function gameControl () {
   ]
   
   const addPosition = (row, column) => {
-    if(row === 0 && column === 0) {
+    if(row == 0 && column == 0) {
       activePlayer.position.push(1)
     }
-    if(row === 0 && column === 1) {
+    if(row == 0 && column == 1) {
       activePlayer.position.push(2)
     }
-    if(row === 0 && column === 2) {
+    if(row == 0 && column == 2) {
       activePlayer.position.push(3)
     }
-    if(row === 1 && column === 0) {
+    if(row == 1 && column == 0) {
       activePlayer.position.push(4)
     }
-    if(row === 1 && column === 1) {
+    if(row == 1 && column == 1) {
       activePlayer.position.push(5)
     }
-    if(row === 1 && column === 2) {
+    if(row == 1 && column == 2) {
       activePlayer.position.push(6)
     }
-    if(row === 2 && column === 0) {
+    if(row == 2 && column == 0) {
       activePlayer.position.push(7)
     }
-    if(row === 2 && column === 1) {
+    if(row == 2 && column == 1) {
       activePlayer.position.push(8)
     }
-    if(row === 2 && column === 2) {
+    if(row == 2 && column == 2) {
       activePlayer.position.push(9)
     }
   }
 
   const checkWin = (player) => {
+    console.log(player)
     winningCombination.forEach(array => {
         player.checkArray(array)
     })
   }
 
-  const playGame = (row, column) => {
+  const playGame = (row, column, player) => {
      const change = board.changeCell(row, column, getActivePlayer().token)
      if (change === "taken") {
       return "This place is already occupied"
      }
-     console.log(activePlayer)
      addPosition(row, column)
-     checkWin(activePlayer)
+     checkWin(player)
      switchPlayerTurn()
      showResult()
   }
 
   return {
-    playGame
+    playGame,
+    getActivePlayer,
+    getBoard: board.getBoard
   }
 }
 
-const game = gameControl();
+function ScreenController() {
+  const game = gameControl();
+  const boardDiv = document.querySelector('.game-board');
+  
+  const updateScreen = () => {
+    // clear the board
+    boardDiv.textContent = "";
+    // get the newest version of the board and player turn
+    const board = game.getBoard();
+
+    // Render board squares
+    board.forEach((row, indexRow) => {
+      row.forEach((cell, index) => {
+        // Anything clickable should be a button!!
+        const cellButton = document.createElement("button");
+        cellButton.classList.add("game");
+        // Create a data attribute to identify the column
+        // This makes it easier to pass into our `playRound` function 
+        cellButton.dataset.column = index
+        cellButton.dataset.row = indexRow
+        cellButton.textContent = cell.getValue();
+        boardDiv.appendChild(cellButton);
+      })
+    })
+  }
+
+  // Add event listener for the board
+  function clickHandlerBoard(e) {
+    const activePlayer = game.getActivePlayer();
+    const selectedColumn = e.target.dataset.column;
+    const selectedRow = e.target.dataset.row;
+    // Make sure I've clicked a column and not the gaps in between
+    if (!selectedColumn && !selectedRow) return;
+    
+    game.playGame(selectedRow, selectedColumn, activePlayer);
+    updateScreen();
+  }
+  boardDiv.addEventListener("click", clickHandlerBoard);
+
+  // Initial render
+  updateScreen();
+
+  // We don't need to return anything from this module because everything is encapsulated inside this screen controller.
+}
+
+ScreenController();
