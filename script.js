@@ -1,10 +1,40 @@
-const squares = document.querySelectorAll(".game")
+const btnStart = document.getElementById("start");
+const btnReset = document.getElementById("reset");
+const btnName = document.getElementById("name-change");
+const span = document.getElementsByClassName("close")[0];
+const modal = document.getElementById("myModal");
+const form = document.querySelector("#myForm");
+const playerOne = document.querySelector("#first-player");
+const playerTwo = document.querySelector("#second-player");
+const gameContainer = document.querySelector(".game-board");
+const container = document.querySelector(".container");
 
+// Modal start
+btnName.onclick = function () {
+  modal.style.display = "flex";
+};
+
+span.onclick = function () {
+  modal.style.display = "none";
+};
+
+window.onclick = function (event) {
+  if (event.target === modal) {
+    modal.style.display = "none";
+  }
+};
+// Modal end
+
+function removeAllChildNodes(parent) {
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild);
+  }
+}
 
 function gameBoard () {
   const rows = 3;
   const columns = 3;
-  const board = [];
+  let board = [];
 
   for (let i = 0; i < rows; i++) {
     board[i] = [];
@@ -32,7 +62,7 @@ function gameBoard () {
   return {
     getBoard,
     printBoard,
-    changeCell,
+    changeCell
   }
 
 }
@@ -53,7 +83,7 @@ function Cell () {
 
 }
 
-function gameControl () {
+function gameControl() {
   const board = gameBoard();
 
   const players = [
@@ -81,7 +111,6 @@ function gameControl () {
     }
   ];
 
-  
   let activePlayer = players[0];
   
   const switchPlayerTurn = () => {
@@ -89,6 +118,19 @@ function gameControl () {
   };
   
   const getActivePlayer = () => activePlayer;
+
+  const changePlayerName = (playerX, playerO) => {
+    if (!playerX) {
+      playerX = "Player X"
+    }
+    if (!playerO) {
+      playerO = "Player O"
+    }
+    players[0].name = playerX
+    players[1].name = playerO
+    console.log(players[0].name)
+    console.log(players[1].name)
+  }
   
   const showResult = () => {
     board.printBoard()
@@ -141,6 +183,11 @@ function gameControl () {
         player.checkArray(array)
     })
   }
+  
+  const resetGame = () => {
+    players[0].position = []
+    players[1].position = []
+  }
 
   const playGame = (row, column, player) => {
      const change = board.changeCell(row, column, getActivePlayer().token)
@@ -156,14 +203,26 @@ function gameControl () {
   return {
     playGame,
     getActivePlayer,
-    getBoard: board.getBoard
+    getBoard: board.getBoard,
+    clearBoard: board.clearBoard,
+    resetGame,
+    changePlayerName
   }
 }
 
-function ScreenController() {
+function ScreenController(gameState) {
+
+  if (gameState === "reset") {
+    removeAllChildNodes(container);
+    const newGameBoard = document.createElement("div");
+    newGameBoard.classList.add("game-board");
+    container.appendChild(newGameBoard)
+  }
+  
   const game = gameControl();
   const boardDiv = document.querySelector('.game-board');
   const playerTurnDiv = document.querySelector('.text-display');
+  
   
   const updateScreen = () => {
     // clear the board
@@ -202,12 +261,27 @@ function ScreenController() {
     game.playGame(selectedRow, selectedColumn, activePlayer);
     updateScreen();
   }
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const playerX = playerOne.value;
+    const playerO = playerTwo.value;
+    game.changePlayerName(playerX, playerO);
+  });
+
   boardDiv.addEventListener("click", clickHandlerBoard);
 
   // Initial render
   updateScreen();
-
-  // We don't need to return anything from this module because everything is encapsulated inside this screen controller.
 }
 
-ScreenController();
+btnStart.addEventListener("click", function() {
+  ScreenController();
+})
+
+btnReset.addEventListener("click", function(e) {
+  console.log(e.target.id)
+  ScreenController(e.target.id);
+})
+
+
