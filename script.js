@@ -8,6 +8,9 @@ const playerOne = document.querySelector("#first-player");
 const playerTwo = document.querySelector("#second-player");
 const gameContainer = document.querySelector(".game-board");
 const container = document.querySelector(".container");
+let playerOneName = "Player X"
+let playerTwoName = "Player O"
+let gameState;
 
 // Modal start
 btnName.onclick = function () {
@@ -120,12 +123,12 @@ function gameControl() {
   const getActivePlayer = () => activePlayer;
 
   const changePlayerName = (playerX, playerO) => {
-    if (!playerX) {
-      playerX = "Player X"
-    }
-    if (!playerO) {
-      playerO = "Player O"
-    }
+      if (!playerX) {
+        playerX = "Player X"
+      }
+      if (!playerO) {
+        playerO = "Player O"
+      }
     players[0].name = playerX
     players[1].name = playerO
     console.log(players[0].name)
@@ -204,14 +207,12 @@ function gameControl() {
     playGame,
     getActivePlayer,
     getBoard: board.getBoard,
-    clearBoard: board.clearBoard,
+    changePlayerName,
     resetGame,
-    changePlayerName
   }
 }
 
 function ScreenController(gameState) {
-
   if (gameState === "reset") {
     removeAllChildNodes(container);
     const newGameBoard = document.createElement("div");
@@ -262,13 +263,6 @@ function ScreenController(gameState) {
     updateScreen();
   }
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const playerX = playerOne.value;
-    const playerO = playerTwo.value;
-    game.changePlayerName(playerX, playerO);
-  });
-
   boardDiv.addEventListener("click", clickHandlerBoard);
 
   // Initial render
@@ -276,12 +270,31 @@ function ScreenController(gameState) {
 }
 
 btnStart.addEventListener("click", function() {
-  ScreenController();
+  if (!gameState) {
+    gameState = "started"
+    ScreenController();
+  }
 })
 
 btnReset.addEventListener("click", function(e) {
-  console.log(e.target.id)
-  ScreenController(e.target.id);
+  if (gameState === "started") {
+    console.log(e.target.id)
+    ScreenController(e.target.id);
+  }
 })
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  let playerX = playerOne.value;
+  let playerO = playerTwo.value;
+  if (!playerX) {
+    playerX = "Player X"
+  }
+  if (!playerO) {
+    playerO = "Player O"
+  }
+  players[0].name = playerX
+  players[1].name = playerO
+});
 
 
