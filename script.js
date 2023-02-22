@@ -192,7 +192,7 @@ function gameControl() {
     displayContainer.classList.add("game-result");
     container.appendChild(displayContainer)
     if (result === "win") {
-      gameDisplayResult.textContent = name;
+      gameDisplayResult.textContent = `The Winner is ${name}`
     }
     if (result === "draw") {
       gameDisplayResult.textContent = "DRAW"
