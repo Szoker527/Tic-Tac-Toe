@@ -123,12 +123,6 @@ function gameControl() {
   const getActivePlayer = () => activePlayer;
 
   const changePlayerName = (playerX, playerO) => {
-      if (!playerX) {
-        playerX = "Player X"
-      }
-      if (!playerO) {
-        playerO = "Player O"
-      }
     players[0].name = playerX
     players[1].name = playerO
     console.log(players[0].name)
@@ -224,12 +218,12 @@ function ScreenController(gameState) {
   const boardDiv = document.querySelector('.game-board');
   const playerTurnDiv = document.querySelector('.text-display');
   
-  
   const updateScreen = () => {
     // clear the board
     boardDiv.textContent = "";
     // get the newest version of the board and player turn
     const board = game.getBoard();
+    game.changePlayerName(playerOneName, playerTwoName);
     const activePlayer = game.getActivePlayer();
 
     // Display player's turn
@@ -285,16 +279,14 @@ btnReset.addEventListener("click", function(e) {
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  let playerX = playerOne.value;
-  let playerO = playerTwo.value;
-  if (!playerX) {
-    playerX = "Player X"
+  playerOneName = playerOne.value
+  playerTwoName = playerTwo.value
+  if (!playerOne.value) {
+    playerOneName = "Player X"
   }
-  if (!playerO) {
-    playerO = "Player O"
+  if (!playerTwo.value) {
+    playerTwoName = "Player O"
   }
-  players[0].name = playerX
-  players[1].name = playerO
 });
 
 
