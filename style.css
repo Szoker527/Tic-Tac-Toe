@@ -20,6 +20,10 @@ body {
   margin-bottom: 20px;
 }
 
+.hidden-button {
+  display: none;
+}
+
 .game-board {
   width: 500px;
   height: 500px;
@@ -33,10 +37,19 @@ body {
 }
 
 .game-result {
+  display: flex;
   width: 500px;
   height: 500px;
   border: 2px solid black;
   background-color: black;
+  justify-content: center;
+  align-items: center;
+}
+
+.result-text {
+  font-size: 34px;
+  font-weight: 600;
+  color: white;
 }
 
 /* Modal box settings */

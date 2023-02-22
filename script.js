@@ -98,7 +98,7 @@ function gameControl() {
         const newArray = this.position.filter(num => array.includes(num));
         if (newArray.length === 3) {
           console.log("Winner!")
-          endGame()
+          endGame("win", this.name)
         }
       }
     },
@@ -110,7 +110,7 @@ function gameControl() {
         const newArray = this.position.filter(num => array.includes(num));
         if (newArray.length === 3) {
           console.log("Winner!")
-          endGame()
+          endGame("win", this.name)
         }
       }
     }
@@ -185,18 +185,27 @@ function gameControl() {
     }
   }
 
-  const endGame = () => {
+  const endGame = (result, name) => {
     removeAllChildNodes(container);
+    const displayContainer = document.createElement("div");
     const gameDisplayResult = document.createElement("div");
-    gameDisplayResult.classList.add("game-result");
-    container.appendChild(gameDisplayResult)
+    displayContainer.classList.add("game-result");
+    container.appendChild(displayContainer)
+    if (result === "win") {
+      gameDisplayResult.textContent = name;
+    }
+    if (result === "draw") {
+      gameDisplayResult.textContent = "DRAW"
+    }
+    gameDisplayResult.classList.add("result-text");
+    displayContainer.appendChild(gameDisplayResult);
   }
 
   const checkDraw = () => {
     const playerOneLength = players[0].position.length;
     const playerTwoLength = players[1].position.length;
     if ((playerOneLength === 4 && playerTwoLength === 5) || (playerTwoLength === 4 && playerOneLength === 5) ) {
-      endGame()
+      endGame("draw")
     }
     console.log(playerOneLength)
     console.log(playerTwoLength)
@@ -285,6 +294,9 @@ function ScreenController(buttonReset) {
 }
 
 btnStart.addEventListener("click", function() {
+  btnStart.style.display = "none";
+  btnReset.style.display = "inline-block"
+  btnName.style.display = "inline-block";
   if (!gameState) {
     gameState = "started"
     ScreenController();
@@ -300,6 +312,7 @@ btnReset.addEventListener("click", function(e) {
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
+  modal.style.display = "none";
   playerOneName = playerOne.value
   playerTwoName = playerTwo.value
   if (!playerOne.value) {
