@@ -32,6 +32,12 @@ body {
   border: 2px solid black;
 }
 
+.game-result {
+  width: 500px;
+  height: 500px;
+  border: 2px solid black;
+  background-color: black;
+}
 
 /* Modal box settings */
 /* The Modal (background) */

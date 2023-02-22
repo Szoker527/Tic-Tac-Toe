@@ -98,6 +98,7 @@ function gameControl() {
         const newArray = this.position.filter(num => array.includes(num));
         if (newArray.length === 3) {
           console.log("Winner!")
+          endGame()
         }
       }
     },
@@ -109,6 +110,7 @@ function gameControl() {
         const newArray = this.position.filter(num => array.includes(num));
         if (newArray.length === 3) {
           console.log("Winner!")
+          endGame()
         }
       }
     }
@@ -173,12 +175,6 @@ function gameControl() {
       activePlayer.position.push(9)
     }
   }
-
-  const checkWin = (player) => {
-    winningCombination.forEach(array => {
-        player.checkArray(array)
-    })
-  }
   
   const resetGame = (gameState) => {
     if (gameState === "reset") {
@@ -189,6 +185,30 @@ function gameControl() {
     }
   }
 
+  const endGame = () => {
+    removeAllChildNodes(container);
+    const gameDisplayResult = document.createElement("div");
+    gameDisplayResult.classList.add("game-result");
+    container.appendChild(gameDisplayResult)
+  }
+
+  const checkDraw = () => {
+    const playerOneLength = players[0].position.length;
+    const playerTwoLength = players[1].position.length;
+    if ((playerOneLength === 4 && playerTwoLength === 5) || (playerTwoLength === 4 && playerOneLength === 5) ) {
+      endGame()
+    }
+    console.log(playerOneLength)
+    console.log(playerTwoLength)
+  }
+
+  const checkWin = (player) => {
+    winningCombination.forEach(array => {
+        player.checkArray(array)
+    })
+  }
+  
+
   const playGame = (row, column, player) => {
      const change = board.changeCell(row, column, getActivePlayer().token)
      if (change === "taken") {
@@ -196,6 +216,7 @@ function gameControl() {
      }
      addPosition(row, column)
      checkWin(player)
+     checkDraw()
      switchPlayerTurn()
      showResult()
   }
