@@ -175,15 +175,18 @@ function gameControl() {
   }
 
   const checkWin = (player) => {
-    console.log(player)
     winningCombination.forEach(array => {
         player.checkArray(array)
     })
   }
   
-  const resetGame = () => {
-    players[0].position = []
-    players[1].position = []
+  const resetGame = (gameState) => {
+    if (gameState === "reset") {
+      removeAllChildNodes(container);
+      const newGameBoard = document.createElement("div");
+      newGameBoard.classList.add("game-board");
+      container.appendChild(newGameBoard)
+    }
   }
 
   const playGame = (row, column, player) => {
@@ -202,19 +205,16 @@ function gameControl() {
     getActivePlayer,
     getBoard: board.getBoard,
     changePlayerName,
-    resetGame,
+    resetGame
   }
 }
 
-function ScreenController(gameState) {
-  if (gameState === "reset") {
-    removeAllChildNodes(container);
-    const newGameBoard = document.createElement("div");
-    newGameBoard.classList.add("game-board");
-    container.appendChild(newGameBoard)
-  }
-  
+function ScreenController(buttonReset) {
   const game = gameControl();
+  if (buttonReset === "reset") {
+    game.resetGame(buttonReset)
+  }
+
   const boardDiv = document.querySelector('.game-board');
   const playerTurnDiv = document.querySelector('.text-display');
   
