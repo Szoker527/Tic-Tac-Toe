@@ -88,17 +88,21 @@ function Cell () {
 
 function gameControl() {
   const board = gameBoard();
-
+  
   const players = [
     {
       name: "playerOneName",
       token: "X",
       position: [],
       checkArray: function(array) {
+        const playerOneLength = players[0].position.length;
+        const playerTwoLength = players[1].position.length;
         const newArray = this.position.filter(num => array.includes(num));
         if (newArray.length === 3) {
-          console.log("Winner!")
-          endGame("win", this.name)
+          return "win"
+        } 
+        if ((playerOneLength === 4 && playerTwoLength === 5) || (playerTwoLength === 4 && playerOneLength === 5)) {
+          return "draw"
         }
       }
     },
@@ -107,10 +111,14 @@ function gameControl() {
       token: "O",
       position: [],
       checkArray: function(array) {
+        const playerOneLength = players[0].position.length;
+        const playerTwoLength = players[1].position.length;
         const newArray = this.position.filter(num => array.includes(num));
         if (newArray.length === 3) {
-          console.log("Winner!")
-          endGame("win", this.name)
+          return "win"
+        } 
+        if ((playerOneLength === 4 && playerTwoLength === 5) || (playerTwoLength === 4 && playerOneLength === 5)) {
+          return "draw"
         }
       }
     }
@@ -186,35 +194,36 @@ function gameControl() {
   }
 
   const endGame = (result, name) => {
+    console.log(result)
     removeAllChildNodes(container);
     const displayContainer = document.createElement("div");
     const gameDisplayResult = document.createElement("div");
+
     displayContainer.classList.add("game-result");
+    gameDisplayResult.classList.add("result-text");
     container.appendChild(displayContainer)
+    displayContainer.appendChild(gameDisplayResult);
+
     if (result === "win") {
       gameDisplayResult.textContent = `The Winner is ${name}`
     }
-    if (result === "draw") {
+    else if (result === "draw") {
       gameDisplayResult.textContent = "DRAW"
     }
-    gameDisplayResult.classList.add("result-text");
-    displayContainer.appendChild(gameDisplayResult);
   }
 
-  const checkDraw = () => {
-    const playerOneLength = players[0].position.length;
-    const playerTwoLength = players[1].position.length;
-    if ((playerOneLength === 4 && playerTwoLength === 5) || (playerTwoLength === 4 && playerOneLength === 5) ) {
-      endGame("draw")
+  const checkResult = (player) => {
+    for (let i = 0; i < winningCombination.length; i++) {
+      const result = player.checkArray(winningCombination[i])
+      if (result === "win") {
+        endGame("win", player.name)
+        break;
+      }
+      if (result === "draw") {
+        endGame("draw")
+        break;
+      }
     }
-    console.log(playerOneLength)
-    console.log(playerTwoLength)
-  }
-
-  const checkWin = (player) => {
-    winningCombination.forEach(array => {
-        player.checkArray(array)
-    })
   }
   
 
@@ -224,8 +233,7 @@ function gameControl() {
       return "This place is already occupied"
      }
      addPosition(row, column)
-     checkWin(player)
-     checkDraw()
+     checkResult(player)
      switchPlayerTurn()
      showResult()
   }
